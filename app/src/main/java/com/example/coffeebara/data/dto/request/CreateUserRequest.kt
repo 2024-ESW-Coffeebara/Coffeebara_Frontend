@@ -1,4 +1,4 @@
-package com.example.coffeebara.data.dto
+package com.example.coffeebara.data.dto.request
 
 data class CreateUserRequest(
     val id : String,

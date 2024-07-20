@@ -1,7 +1,5 @@
 package com.example.coffeebara.viewmodel
 
-import android.bluetooth.BluetoothClass.Device
-import android.util.Log
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -9,15 +7,11 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.example.coffeebara.data.DeviceInfo
 import com.example.coffeebara.data.UserInfo
-import com.example.coffeebara.data.dto.CreateUserRequest
+import com.example.coffeebara.data.dto.request.CreateUserRequest
+import com.example.coffeebara.data.dto.request.LoginUserRequest
 import com.example.coffeebara.repository.MainRepository
 import com.example.coffeebara.repository.MessageOfCreateUser
-import com.example.coffeebara.repository.NetworkResult
 import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
-import kotlin.math.log
 
 class AppViewModel :ViewModel() {
 
@@ -40,10 +34,6 @@ class AppViewModel :ViewModel() {
         UserInfo(1,"장시게이", 37.54, 127.07, "manager")
     )
 
-    fun login(userId: String, userPassword: String, navController:NavController, snackBarHostState: SnackbarHostState){
-
-    }
-
     private var userId : Long? = null
 
     suspend fun createUser(id : String, password : String, name: String): MessageOfCreateUser?{
@@ -59,6 +49,23 @@ class AppViewModel :ViewModel() {
             val result = repository.createUserResponse(createUserRequest)
             userId = result?.userId
             result
+        }.await()
+    }
+
+    suspend fun login(id: String, userPassword: String, navController:NavController, snackBarHostState: SnackbarHostState){
+        val loginUserRequest = LoginUserRequest(
+            id,
+            userPassword
+        )
+
+        viewModelScope.async {
+            val result = repository.loginUserResponse(loginUserRequest, snackBarHostState)
+            userId = result?.userId
+            if (result != null) {
+                if(result.isLogin) {
+                    navController.navigate("Home")
+                }
+            }
         }.await()
     }
 }

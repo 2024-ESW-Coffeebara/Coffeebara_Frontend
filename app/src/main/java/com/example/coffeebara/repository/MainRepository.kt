@@ -1,7 +1,10 @@
 package com.example.coffeebara.repository
 
 import android.util.Log
-import com.example.coffeebara.data.dto.CreateUserRequest
+import androidx.compose.material3.SnackbarHostState
+import androidx.navigation.NavController
+import com.example.coffeebara.data.dto.request.CreateUserRequest
+import com.example.coffeebara.data.dto.request.LoginUserRequest
 import com.example.coffeebara.retrofit.RetrofitClient
 import com.google.gson.Gson
 
@@ -16,6 +19,10 @@ data class MessageOfCreateUser(
     val message : String?,
     val isSuccess : Boolean
 )
+data class BooleanOfLoginUser(
+    val isLogin : Boolean,
+    val userId : Long?,
+)
 
 class MainRepository {
 
@@ -29,11 +36,11 @@ class MainRepository {
                     result?.let { MessageOfCreateUser(it.userId, response.body()?.message!!, true) }
                 }
                 else{
-                    Log.d("im working", "body가 본문에 없습니다.")
+                    Log.d("createUserResponse", "body가 본문에 없습니다.")
                     null
                 }
             } else {
-                Log.d("im working", "HTTP 요청이 실패하였습니다. 코드: ${response.code()}, 메시지: ${response.message()}")
+                Log.d("createUserResponse", "HTTP 요청이 실패하였습니다. 코드: ${response.code()}, 메시지: ${response.message()}")
                 val errorBodyString = response.errorBody()?.string()
                 val errorMessage = if (!errorBodyString.isNullOrBlank()) {
                     val gson = Gson()
@@ -45,10 +52,35 @@ class MainRepository {
                 MessageOfCreateUser(0L, errorMessage, false)
             }
         }catch(e: Exception){
-            Log.e("im working" , e.toString())
+            Log.e("createUserResponse" , e.toString())
             null
         }
     }
 
+    suspend fun loginUserResponse(loginUserRequest: LoginUserRequest, snackbarHostState: SnackbarHostState) : BooleanOfLoginUser? {
+        return try{
+            val response = RetrofitClient.getAPIService.loginUser(loginUserRequest)
+
+            if(response.isSuccessful){
+                BooleanOfLoginUser(true, response.body()?.result?.userId)
+            }
+            else{
+                Log.d("createUserResponse", "HTTP 요청이 실패하였습니다. 코드: ${response.code()}, 메시지: ${response.message()}")
+                val errorBodyString = response.errorBody()?.string()
+                val errorMessage = if (!errorBodyString.isNullOrBlank()) {
+                    val gson = Gson()
+                    val errorResponse = gson.fromJson(errorBodyString, ErrorResponse::class.java)
+                    errorResponse.message
+                } else {
+                    "서버에서 에러 메시지를 가져올 수 없습니다."
+                }
+                snackbarHostState.showSnackbar(errorMessage)
+                BooleanOfLoginUser(false, null)
+            }
+        }catch(e: Exception){
+            Log.e("loginUserResponse" , e.toString())
+            null
+        }
+    }
 
 }

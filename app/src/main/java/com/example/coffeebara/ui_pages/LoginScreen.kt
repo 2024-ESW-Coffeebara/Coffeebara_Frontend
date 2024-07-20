@@ -223,13 +223,12 @@ fun LoginScreen(navController: NavController) {
 
                             else -> {
                                 coroutineScope.launch {
-//                                    appViewModel.login(
-//                                        userID,
-//                                        userPassword,
-//                                        navController,
-//                                        snackBarHostState
-//                                    )
-                                    navController.navigate("Home")
+                                    appViewModel.login(
+                                        userID,
+                                        userPassword,
+                                        navController,
+                                        snackBarHostState
+                                    )
                                 }
                             }
                         }

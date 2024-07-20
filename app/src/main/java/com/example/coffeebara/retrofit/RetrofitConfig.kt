@@ -1,8 +1,9 @@
 package com.example.coffeebara.retrofit
 
 import com.example.coffeebara.common.BaseResponse
-import com.example.coffeebara.data.dto.CreateUserRequest
-import com.example.coffeebara.data.dto.CreateUserResponseResult
+import com.example.coffeebara.data.dto.request.CreateUserRequest
+import com.example.coffeebara.data.dto.request.LoginUserRequest
+import com.example.coffeebara.data.dto.response.CreateUserResponseResult
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
 import retrofit2.Response
@@ -14,6 +15,9 @@ import retrofit2.http.POST
 interface APIService {
     @POST("/user")
     suspend fun createUser(@Body createUserRequest: CreateUserRequest) : Response<BaseResponse<CreateUserResponseResult>>
+
+    @POST("/user/login")
+    suspend fun loginUser(@Body loginUserRequest: LoginUserRequest) : Response<BaseResponse<CreateUserResponseResult>>
 }
 
 object RetrofitClient{
