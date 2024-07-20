@@ -37,8 +37,10 @@ fun HomeScreen(navController: NavController) {
 
     val coroutineScope = rememberCoroutineScope()
 
-    coroutineScope.launch {
-        appViewModel.loadDeviceInfo()
+    if(appViewModel.deviceList.isEmpty()){
+        coroutineScope.launch {
+            appViewModel.loadDeviceInfo()
+        }
     }
 
     Scaffold (
@@ -57,18 +59,20 @@ fun HomeScreen(navController: NavController) {
                 }
             }
 
-//            FloatingActionButton(
-//                modifier = Modifier
-//                    .align(Alignment.BottomEnd)
-//                    .padding(end = 20.dp, bottom = 20.dp),
-//                //.alpha(0.8f),
-//                onClick = {
-//
-//                },
-//                containerColor = SoftBrown
-//            ) {
-//                Icon(imageVector = Icons.Default.Refresh, contentDescription = "새로 고침")
-//            }
+            FloatingActionButton(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(end = 20.dp, bottom = 20.dp),
+                //.alpha(0.8f),
+                onClick = {
+                    coroutineScope.launch {
+                        appViewModel.loadDeviceInfo()
+                    }
+                },
+                containerColor = SoftBrown
+            ) {
+                Icon(imageVector = Icons.Default.Refresh, contentDescription = "새로 고침")
+            }
         }
     }
 }
