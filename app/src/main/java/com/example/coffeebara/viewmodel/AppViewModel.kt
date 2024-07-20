@@ -36,7 +36,7 @@ class AppViewModel :ViewModel() {
 
     private var userId : Long? = null
 
-    suspend fun createUser(id : String, password : String, name: String): MessageOfCreateUser?{
+    suspend fun createUser(id : String, password : String, name: String, snackBarHostState: SnackbarHostState, navController: NavController){
         val createUserRequest = CreateUserRequest(
             id = id,
             password = password,
@@ -46,9 +46,13 @@ class AppViewModel :ViewModel() {
         )
 
         return viewModelScope.async {
-            val result = repository.createUserResponse(createUserRequest)
+            val result = repository.createUserResponse(createUserRequest, snackBarHostState)
             userId = result?.userId
-            result
+            if (result != null) {
+                if(result.isSuccess) {
+                    navController.navigate("Login")
+                }
+            }
         }.await()
     }
 

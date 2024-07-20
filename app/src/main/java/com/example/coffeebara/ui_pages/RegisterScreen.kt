@@ -284,19 +284,13 @@ fun RegisterScreen(navController: NavController) {
 
                             else -> {
                                 coroutineScope.launch {
-                                    val result = appViewModel.createUser(
+                                    appViewModel.createUser(
                                         userID,
                                         userPasswd,
-                                        name
+                                        name,
+                                        snackBarHostState,
+                                        navController
                                     )
-                                    if (result != null) {
-                                        if(result.isSuccess){
-                                            navController.navigate("Login")
-                                        }
-                                        else{
-                                            result.message?.let { snackBarHostState.showSnackbar(it) }
-                                        }
-                                    }
                                 }
                             }
                         }
