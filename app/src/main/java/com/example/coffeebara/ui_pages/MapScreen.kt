@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,13 +42,17 @@ import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnrememberedMutableState")
 @Composable
 fun MainScreen(navController: NavController, deviceId: Long?) {
+
     val appViewModel: AppViewModel =
         viewModel(viewModelStoreOwner = LocalNavGraphViewModelStoreOwner.current)
+
+    val coroutineScope = rememberCoroutineScope()
 
     Scaffold (
         bottomBar = { BottomNavigationBar(navController) }
@@ -76,7 +81,7 @@ fun MainScreen(navController: NavController, deviceId: Long?) {
         ){
             GoogleMap(
                 modifier = Modifier.fillMaxSize(),
-                cameraPositionState = cameraPosition
+                cameraPositionState = cameraPosition,
             ){
                 for(device in appViewModel.deviceList){
                     Marker(
@@ -119,7 +124,9 @@ fun MainScreen(navController: NavController, deviceId: Long?) {
                     .padding(end = 10.dp, bottom = 100.dp),
                     //.alpha(0.8f),
                 onClick = {
-
+                    coroutineScope.launch {
+                        appViewModel.loadDeviceInfo()
+                    }
                 },
                 containerColor = SoftBrown
             ) {
