@@ -3,8 +3,10 @@ package com.example.coffeebara.repository
 import android.util.Log
 import androidx.compose.material3.SnackbarHostState
 import androidx.navigation.NavController
+import com.example.coffeebara.data.DeviceInfo
 import com.example.coffeebara.data.dto.request.CreateUserRequest
 import com.example.coffeebara.data.dto.request.LoginUserRequest
+import com.example.coffeebara.data.dto.response.LoadDeviceInfo
 import com.example.coffeebara.retrofit.RetrofitClient
 import com.google.gson.Gson
 
@@ -77,6 +79,23 @@ class MainRepository {
                 }
                 snackbarHostState.showSnackbar(errorMessage)
                 BooleanOfLoginUser(false, null)
+            }
+        }catch(e: Exception){
+            Log.e("loginUserResponse" , e.toString())
+            null
+        }
+    }
+
+    suspend fun loadDeviceInfo() : List<DeviceInfo>?{
+        return try{
+            val response = RetrofitClient.getAPIService.loadDeviceInfo()
+
+            if(response.isSuccessful){
+                response.body()?.result?.deviceInfos
+            }
+            else{
+                Log.d("createUserResponse", "HTTP 요청이 실패하였습니다. 코드: ${response.code()}, 메시지: ${response.message()}")
+                null
             }
         }catch(e: Exception){
             Log.e("loginUserResponse" , e.toString())

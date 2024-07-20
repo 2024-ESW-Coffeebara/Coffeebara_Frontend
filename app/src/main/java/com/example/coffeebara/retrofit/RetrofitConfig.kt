@@ -4,12 +4,14 @@ import com.example.coffeebara.common.BaseResponse
 import com.example.coffeebara.data.dto.request.CreateUserRequest
 import com.example.coffeebara.data.dto.request.LoginUserRequest
 import com.example.coffeebara.data.dto.response.CreateUserResponseResult
+import com.example.coffeebara.data.dto.response.LoadDeviceInfo
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.POST
 
 interface APIService {
@@ -18,6 +20,9 @@ interface APIService {
 
     @POST("/user/login")
     suspend fun loginUser(@Body loginUserRequest: LoginUserRequest) : Response<BaseResponse<CreateUserResponseResult>>
+
+    @GET("/device")
+    suspend fun loadDeviceInfo() : Response<BaseResponse<LoadDeviceInfo>>
 }
 
 object RetrofitClient{

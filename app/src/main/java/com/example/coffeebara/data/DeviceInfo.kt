@@ -5,6 +5,5 @@ data class DeviceInfo(
     val location : String,
     val latitude : Double,
     val longitude : Double,
-    val capacity : Int,
-    val manager : String
+    var capacity : Int,
 )

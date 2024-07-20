@@ -14,6 +14,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -25,13 +26,20 @@ import com.example.coffeebara.ui_modules.BottomNavigationBar
 import com.example.coffeebara.ui_modules.HomeDeviceItemUi
 import com.example.coffeebara.ui_modules.HomeTopBar
 import com.example.coffeebara.viewmodel.AppViewModel
+import kotlinx.coroutines.launch
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "CoroutineCreationDuringComposition")
 @Composable
 fun HomeScreen(navController: NavController) {
 
     val appViewModel: AppViewModel =
         viewModel(viewModelStoreOwner = LocalNavGraphViewModelStoreOwner.current)
+
+    val coroutineScope = rememberCoroutineScope()
+
+    coroutineScope.launch {
+        appViewModel.loadDeviceInfo()
+    }
 
     Scaffold (
         bottomBar = { BottomNavigationBar(navController = navController) },
